@@ -1,0 +1,24 @@
+pipeline:
+  name: "vtxflow-artifact-upload-test"
+
+stages:
+  - test-artifacts
+
+jobs:
+  - name: "upload-test-artifact"
+    stage: "test-artifacts"
+    image: "alpine:latest"
+    script:
+      - "echo 'Installing zip...'"
+      - "apk add --no-cache zip"
+      - "echo 'Creating test artifact...'"
+      - "mkdir -p artifact-contents/nested"
+      - "echo 'This is a test file for MinIO upload' > artifact-contents/test-file.txt"
+      - "echo 'Nested file content' > artifact-contents/nested/nested-file.txt"
+      - "zip -r artifact.zip artifact-contents"
+      - "echo 'Done. Listing artifact:'"
+      - "ls -l artifact.zip"
+    artifacts:
+      paths:
+        - "artifact.zip"
+      expire_in: "1 day"
